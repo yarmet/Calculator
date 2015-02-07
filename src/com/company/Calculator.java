@@ -8,13 +8,12 @@ package com.company;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class Calculator {
+class Calculator {
 
     private Stack<Character> operatorStack = new Stack();
     private List<String> out = new ArrayList<String>();
 
     private Map<Character, Integer> priority = new HashMap<Character, Integer>();
-
 
     {
         priority.put('^', 3);
@@ -146,13 +145,5 @@ public class Calculator {
             System.exit(0);
         }
         return stack.pop();
-    }
-
-
-    public static void main(String[] args) {
-        String str = "3 + 4 * 2 / (1 - 5)^2";
-        Calculator c = new Calculator();
-        System.out.println(c.getOPN(str));
-        System.out.println(c.calculate());
     }
 }
