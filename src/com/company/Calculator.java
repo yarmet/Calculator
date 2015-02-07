@@ -112,6 +112,7 @@ class Calculator {
 
 
     BigDecimal calculate() {
+
         BigDecimal firstDigit, secondDigit;
         Stack<BigDecimal> stack = new Stack<BigDecimal>();
         try {
