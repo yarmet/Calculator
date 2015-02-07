@@ -69,7 +69,7 @@ class Calculator {
             } else {
                 //минус перед которым нет другого числа является унарным. за исключением случаев
                 // когда перед ним закрывающая скобка
-                if (!isDigit(previousSymbol) && curentSymbol == '-'&& previousSymbol !=')') curentSymbol = '±';
+                if (!isDigit(previousSymbol) && curentSymbol == '-' && previousSymbol != ')') curentSymbol = '±';
                 //  минус на плюс  дает минус
                 if (previousSymbol == '-' && curentSymbol == '+') continue;
             }
@@ -90,8 +90,8 @@ class Calculator {
             }
         }
         //кладем в выходную строку последнее число из входной строки, если оно есть
-        if(tempString.length()>0)
-        out.add(tempString.toString());
+        if (tempString.length() > 0)
+            out.add(tempString.toString());
         // после того как входная строка закончилась , выталкиваем все операторы из стека.
         while (!operatorStack.isEmpty()) {
             out.add(operatorStack.pop().toString());
@@ -116,6 +116,13 @@ class Calculator {
         Stack<BigDecimal> stack = new Stack<BigDecimal>();
         try {
             for (String t : out) {
+
+                // меняем значок унарного минуса на обычный значок.
+                if (t.contains("±")) {
+                    t = t.replace("±", "-");
+                }
+
+                // если на входе оператор ^,/,*,+,-  то вытаскиваем из стека два числа и производим над ними действие.
                 if (isOperator(t)) {
                     secondDigit = stack.pop();
                     firstDigit = stack.pop();
@@ -135,8 +142,8 @@ class Calculator {
                     if (t.equals("-")) {
                         stack.push(firstDigit.subtract(secondDigit).setScale(8, BigDecimal.ROUND_HALF_EVEN));
                     }
-                }  else  {
-                    t = t.replace("±", "-");
+                } else {
+                    // если на входе число, то кладем его в стек.
                     stack.push(new BigDecimal(t));
                 }
             }

@@ -5,7 +5,7 @@ package com.company;
  */
 public class Main {
     public static void main(String[] args) {
-        String str = "4^-2";
+        String str = "10^(1/2)";
         Calculator c = new Calculator();
         System.out.println(c.getOPN(str));
         System.out.println(c.calculate());
