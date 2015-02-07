@@ -7,7 +7,6 @@ import java.util.*;
 
 class Calculator {
     
-    private Stack<Character> operatorStack = new Stack();
     private Map<Character, Integer> priority = new HashMap<Character, Integer>();
 
     {
@@ -21,9 +20,9 @@ class Calculator {
 
 
     
-    private void processingOperators(Character inputSymbol, List<String> outString) {
-        List<String> out = outString;
-        
+    private void processingOperators(Character inputSymbol, List<String> outString1, Stack<Character> operatorStack1) {
+        List<String> outString = outString1;
+        Stack<Character> operatorStack = operatorStack1;
         // если если стек оператов пуст или символом является открывающая скобка, кладем ее в стек.
         if (inputSymbol == '(' || operatorStack.isEmpty()) {
             operatorStack.push(inputSymbol);
@@ -32,7 +31,7 @@ class Calculator {
         // если на вход пришла закрывающая скобка, то достаем все операторы из стека, пока не встретим открывающую скобку.
         if (inputSymbol == ')') {
             while (operatorStack.peek() != '(') {
-                out.add(operatorStack.pop().toString());
+                outString.add(operatorStack.pop().toString());
             }
             operatorStack.pop();
             return;
@@ -45,7 +44,7 @@ class Calculator {
             //пока последним елементом стека не будет оператор с более низким приоритетом или пока стек не окажется пуст.
             // Затем кладем в стек входящий оператор.
             while (!operatorStack.isEmpty() && priority.get(inputSymbol) <= priority.get(operatorStack.peek())) {
-                out.add(operatorStack.pop().toString());
+                outString.add(operatorStack.pop().toString());
             }
             operatorStack.push(inputSymbol);
         }
@@ -57,6 +56,9 @@ class Calculator {
      * метод возвращает обратную польскую запись.
      */
    public List getOPN(String inputString) {
+       //стэк для хранения операторов
+        Stack<Character> operatorStack = new Stack();
+       // выходной массив
         List<String> out = new ArrayList<String>();
         StringBuilder tempString = new StringBuilder();
         Character previousSymbol = null;
@@ -91,7 +93,7 @@ class Calculator {
                     out.add(tempString.toString());
                 }
                 tempString.delete(0, tempString.length());
-                processingOperators(curentSymbol,out);
+                processingOperators(curentSymbol,out,operatorStack);
             }
         }
         //кладем в выходную строку последнее число из входной строки, если оно есть
@@ -117,7 +119,9 @@ class Calculator {
     }
 
 
-    
+    /**
+     *выводит ответ выражения
+     */
    public BigDecimal getAnswer(String inputSymbol) {
 
         BigDecimal firstDigit, secondDigit;
