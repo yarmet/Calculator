@@ -6,10 +6,8 @@ import java.math.MathContext;
 import java.util.*;
 
 class Calculator {
-
+    
     private Stack<Character> operatorStack = new Stack();
-    private List<String> out = new ArrayList<String>();
-
     private Map<Character, Integer> priority = new HashMap<Character, Integer>();
 
     {
@@ -22,7 +20,10 @@ class Calculator {
     }
 
 
-    private void processingOperators(Character inputSymbol) {
+    
+    private void processingOperators(Character inputSymbol, List<String> outString) {
+        List<String> out = outString;
+        
         // если если стек оператов пуст или символом является открывающая скобка, кладем ее в стек.
         if (inputSymbol == '(' || operatorStack.isEmpty()) {
             operatorStack.push(inputSymbol);
@@ -50,9 +51,13 @@ class Calculator {
         }
     }
 
-
-    List getOPN(String inputString) {
-
+    
+    
+    /**
+     * метод возвращает обратную польскую запись.
+     */
+   public List getOPN(String inputString) {
+        List<String> out = new ArrayList<String>();
         StringBuilder tempString = new StringBuilder();
         Character previousSymbol = null;
 
@@ -86,7 +91,7 @@ class Calculator {
                     out.add(tempString.toString());
                 }
                 tempString.delete(0, tempString.length());
-                processingOperators(curentSymbol);
+                processingOperators(curentSymbol,out);
             }
         }
         //кладем в выходную строку последнее число из входной строки, если оно есть
@@ -100,28 +105,33 @@ class Calculator {
     }
 
 
+    
     private boolean isDigit(Character t) {
         return t >= '0' && t <= '9' || t == '.' || t == '±';
     }
 
+    
 
     private boolean isOperator(String s) {
         return s.equals("^") || s.equals("*") || s.equals("/") || s.equals("+") || s.equals("-");
     }
 
 
-    BigDecimal calculate() {
+    
+   public BigDecimal getAnswer(String inputSymbol) {
 
         BigDecimal firstDigit, secondDigit;
         Stack<BigDecimal> stack = new Stack<BigDecimal>();
+        
+        //получаем обратную польскую запись.
+       List<String> out = getOPN(inputSymbol);
+        
         try {
             for (String t : out) {
-
                 // меняем значок унарного минуса на обычный значок.
                 if (t.contains("±")) {
                     t = t.replace("±", "-");
                 }
-
                 // если на входе оператор ^,/,*,+,-  то вытаскиваем из стека два числа и производим над ними действие.
                 if (isOperator(t)) {
                     secondDigit = stack.pop();
