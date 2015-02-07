@@ -15,6 +15,7 @@ public class Calculator {
 
     private Map<Character, Integer> priority = new HashMap<Character, Integer>();
 
+
     {
         priority.put('^', 3);
         priority.put('*', 2);
