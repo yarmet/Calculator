@@ -2,6 +2,7 @@ package com.company;
 
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.*;
 
 class Calculator {
@@ -120,7 +121,7 @@ class Calculator {
                     firstDigit = stack.pop();
 
                     if (t.equals("^")) {
-                        stack.push(firstDigit.pow(secondDigit.intValue()).setScale(8, BigDecimal.ROUND_HALF_EVEN));
+                        stack.push(firstDigit.pow(secondDigit.intValue(), MathContext.DECIMAL32));
                     }
                     if (t.equals("*")) {
                         stack.push(firstDigit.multiply(secondDigit).setScale(8, BigDecimal.ROUND_HALF_EVEN));
