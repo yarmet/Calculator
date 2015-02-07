@@ -66,8 +66,9 @@ class Calculator {
                 if (curentSymbol == '-') curentSymbol = '±';
                 // если наш символ не первый в строке
             } else {
-                //минус перед которым нет другого числа является унарным.
-                if (!isDigit(previousSymbol) && curentSymbol == '-') curentSymbol = '±';
+                //минус перед которым нет другого числа является унарным. за исключением случаев
+                // когда перед ним закрывающая скобка
+                if (!isDigit(previousSymbol) && curentSymbol == '-'&& previousSymbol !=')') curentSymbol = '±';
                 //  минус на плюс  дает минус
                 if (previousSymbol == '-' && curentSymbol == '+') continue;
             }
@@ -80,14 +81,15 @@ class Calculator {
                 // Перекидываем число из временной строки в выходную,
                 // обнуляем временную строку и начинаем работать с оператором.
             } else {
-                if (tempString.length() != 0) {
+                if (tempString.length() > 0) {
                     out.add(tempString.toString());
                 }
                 tempString.delete(0, tempString.length());
                 processingOperators(curentSymbol);
             }
         }
-        //кладем в выходную строку последнее число из входной строки
+        //кладем в выходную строку последнее число из входной строки, если оно есть
+        if(tempString.length()>0)
         out.add(tempString.toString());
         // после того как входная строка закончилась , выталкиваем все операторы из стека.
         while (!operatorStack.isEmpty()) {
@@ -132,7 +134,7 @@ class Calculator {
                     if (t.equals("-")) {
                         stack.push(firstDigit.subtract(secondDigit).setScale(8, BigDecimal.ROUND_HALF_EVEN));
                     }
-                } else {
+                }  else  {
                     t = t.replace("±", "-");
                     stack.push(new BigDecimal(t));
                 }
