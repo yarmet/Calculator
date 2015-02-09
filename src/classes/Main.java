@@ -1,4 +1,4 @@
-package com.company;
+package classes;
 
 /**
  * Created by yarmet on 07.02.2015.
