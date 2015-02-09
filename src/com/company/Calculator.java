@@ -20,9 +20,8 @@ class Calculator {
 
 
     
-    private void processingOperators(Character inputSymbol, List<String> outString1, Stack<Character> operatorStack1) {
-        List<String> outString = outString1;
-        Stack<Character> operatorStack = operatorStack1;
+    private void processingOperators(Character inputSymbol, List<String> outString, Stack<Character> operatorStack) {
+
         // если если стек оператов пуст или символом является открывающая скобка, кладем ее в стек.
         if (inputSymbol == '(' || operatorStack.isEmpty()) {
             operatorStack.push(inputSymbol);
