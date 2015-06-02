@@ -6,7 +6,7 @@ import java.math.MathContext;
 import java.util.*;
 
 class Calculator {
-    
+
     private Map<Character, Integer> priority = new HashMap<Character, Integer>();
 
     {
@@ -19,7 +19,6 @@ class Calculator {
     }
 
 
-    
     private void processingOperators(Character inputSymbol, List<String> outString, Stack<Character> operatorStack) {
         // если если стек оператов пуст или символом является открывающая скобка, кладем ее в стек.
         if (inputSymbol == '(' || operatorStack.isEmpty()) {
@@ -48,15 +47,14 @@ class Calculator {
         }
     }
 
-    
-    
+
     /**
      * метод возвращает обратную польскую запись.
      */
-   public List getOPN(String inputString) {
-       //стэк для хранения операторов
+    public List getOPN(String inputString) {
+        //стэк для хранения операторов
         Stack<Character> operatorStack = new Stack();
-       // выходной массив
+        // выходной массив
         List<String> out = new ArrayList<String>();
         StringBuilder tempString = new StringBuilder();
         Character previousSymbol = null;
@@ -91,7 +89,7 @@ class Calculator {
                     out.add(tempString.toString());
                 }
                 tempString.delete(0, tempString.length());
-                processingOperators(curentSymbol,out,operatorStack);
+                processingOperators(curentSymbol, out, operatorStack);
             }
         }
         //кладем в выходную строку последнее число из входной строки, если оно есть
@@ -105,12 +103,10 @@ class Calculator {
     }
 
 
-    
     private boolean isDigit(Character t) {
         return t >= '0' && t <= '9' || t == '.' || t == '±';
     }
 
-    
 
     private boolean isOperator(String s) {
         return s.equals("^") || s.equals("*") || s.equals("/") || s.equals("+") || s.equals("-");
@@ -118,16 +114,16 @@ class Calculator {
 
 
     /**
-     *выводит ответ выражения
+     * выводит ответ выражения
      */
-   public BigDecimal getAnswer(String inputSymbol) {
+    public BigDecimal getAnswer(String inputSymbol) {
 
         BigDecimal firstDigit, secondDigit;
         Stack<BigDecimal> stack = new Stack<BigDecimal>();
-        
+
         //получаем обратную польскую запись.
-       List<String> out = getOPN(inputSymbol);
-        
+        List<String> out = getOPN(inputSymbol);
+
         try {
             for (String t : out) {
                 // меняем значок унарного минуса на обычный значок.
@@ -141,17 +137,13 @@ class Calculator {
 
                     if (t.equals("^")) {
                         stack.push(firstDigit.pow(secondDigit.intValue(), MathContext.DECIMAL32));
-                    }
-                    if (t.equals("*")) {
+                    } else if (t.equals("*")) {
                         stack.push(firstDigit.multiply(secondDigit).setScale(8, BigDecimal.ROUND_HALF_EVEN));
-                    }
-                    if (t.equals("/")) {
+                    } else if (t.equals("/")) {
                         stack.push(firstDigit.divide(secondDigit, 8, BigDecimal.ROUND_HALF_EVEN));
-                    }
-                    if (t.equals("+")) {
+                    } else if (t.equals("+")) {
                         stack.push(firstDigit.add(secondDigit).setScale(8, BigDecimal.ROUND_HALF_EVEN));
-                    }
-                    if (t.equals("-")) {
+                    } else if (t.equals("-")) {
                         stack.push(firstDigit.subtract(secondDigit).setScale(8, BigDecimal.ROUND_HALF_EVEN));
                     }
                 } else {
