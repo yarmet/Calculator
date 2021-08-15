@@ -1,13 +1,11 @@
-package classes;
-
-
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.*;
 
 class Calculator {
 
-    private Map<Character, Integer> priority = new HashMap<Character, Integer>();
+    private final Map<Character, Integer> priority = new HashMap<Character, Integer>();
 
     {
         priority.put('^', 3);
@@ -20,7 +18,7 @@ class Calculator {
 
 
     private void processingOperators(Character inputSymbol, List<String> outString, Stack<Character> operatorStack) {
-        // если если стек оператов пуст или символом является открывающая скобка, кладем ее в стек.
+        // если стек операторов пуст или символом является открывающая скобка, кладем ее в стек.
         if (inputSymbol == '(' || operatorStack.isEmpty()) {
             operatorStack.push(inputSymbol);
             return;
@@ -33,54 +31,52 @@ class Calculator {
             operatorStack.pop();
             return;
         }
-        // если на входе опертор, и его приоритет выше, чем приоритет последнего оператора в стеке, то кладем его в стек.
-        if (priority.get(inputSymbol) > priority.get(operatorStack.peek())) {
-            operatorStack.push(inputSymbol);
-        } else {
+        // если на входе оператор, и его приоритет выше, чем приоритет последнего оператора в стеке, то кладем его в стек.
+        if (priority.get(inputSymbol) <= priority.get(operatorStack.peek())) {
             // Если на входе оператор и его приоритет ниже или равен чем у последнего в стеке, то достаем операторы из стека до тех пор,
-            //пока последним елементом стека не будет оператор с более низким приоритетом или пока стек не окажется пуст.
+            // пока последним элементом стека не будет оператор с более низким приоритетом или пока стек не окажется пуст.
             // Затем кладем в стек входящий оператор.
             while (!operatorStack.isEmpty() && priority.get(inputSymbol) <= priority.get(operatorStack.peek())) {
                 outString.add(operatorStack.pop().toString());
             }
-            operatorStack.push(inputSymbol);
         }
+        operatorStack.push(inputSymbol);
     }
 
 
     /**
      * метод возвращает обратную польскую запись.
      */
-    public List getOPN(String inputString) {
-        //стэк для хранения операторов
-        Stack<Character> operatorStack = new Stack();
+    public List<String> getOPN(String inputString) {
+        // стек для хранения операторов
+        Stack<Character> operatorStack = new Stack<>();
         // выходной массив
-        List<String> out = new ArrayList<String>();
+        List<String> out = new ArrayList<>();
         StringBuilder tempString = new StringBuilder();
         Character previousSymbol = null;
 
-        for (Character curentSymbol : inputString.toCharArray()) {
+        for (Character currentSymbol : inputString.toCharArray()) {
             // пропускаем пробелы
-            if (curentSymbol == ' ') continue;
+            if (currentSymbol == ' ') continue;
             // заменим запятую точкой
-            if (curentSymbol == ',') curentSymbol = '.';
+            if (currentSymbol == ',') currentSymbol = '.';
             //если наш символ первый в строке.
             if (previousSymbol == null) {
                 // и если он минус, то заменяем его унарным минусом ±
-                if (curentSymbol == '-') curentSymbol = '±';
+                if (currentSymbol == '-') currentSymbol = '±';
                 // если наш символ не первый в строке
             } else {
-                //минус перед которым нет другого числа является унарным. за исключением случаев
+                // Минус перед которым нет другого числа, является унарным. За исключением случаев
                 // когда перед ним закрывающая скобка
-                if (!isDigit(previousSymbol) && curentSymbol == '-' && previousSymbol != ')') curentSymbol = '±';
-                //  минус на плюс  дает минус
-                if (previousSymbol == '-' && curentSymbol == '+') continue;
+                if (!isDigit(previousSymbol) && currentSymbol == '-' && previousSymbol != ')') currentSymbol = '±';
+                //  минус на плюс дает минус
+                if (previousSymbol == '-' && currentSymbol == '+') continue;
             }
             // приравниваем предыдущий символ к текущему
-            previousSymbol = curentSymbol;
-            //  если нам попадает подряд несколько цифр, кладем их во временную строку, т.к. это одно большое число.
-            if (isDigit(curentSymbol)) {
-                tempString.append(curentSymbol);
+            previousSymbol = currentSymbol;
+            //  Если нам попадает подряд несколько цифр, кладем их во временную строку, т.к. это одно большое число.
+            if (isDigit(currentSymbol)) {
+                tempString.append(currentSymbol);
                 // если нам попадается оператор, значит цифры числа кончились и мы имеем во временной строке полное число.
                 // Перекидываем число из временной строки в выходную,
                 // обнуляем временную строку и начинаем работать с оператором.
@@ -89,13 +85,13 @@ class Calculator {
                     out.add(tempString.toString());
                 }
                 tempString.delete(0, tempString.length());
-                processingOperators(curentSymbol, out, operatorStack);
+                processingOperators(currentSymbol, out, operatorStack);
             }
         }
         //кладем в выходную строку последнее число из входной строки, если оно есть
         if (tempString.length() > 0)
             out.add(tempString.toString());
-        // после того как входная строка закончилась , выталкиваем все операторы из стека.
+        // после того как входная строка закончилась, выталкиваем все операторы из стека.
         while (!operatorStack.isEmpty()) {
             out.add(operatorStack.pop().toString());
         }
@@ -135,16 +131,12 @@ class Calculator {
                     secondDigit = stack.pop();
                     firstDigit = stack.pop();
 
-                    if (t.equals("^")) {
-                        stack.push(firstDigit.pow(secondDigit.intValue(), MathContext.DECIMAL32));
-                    } else if (t.equals("*")) {
-                        stack.push(firstDigit.multiply(secondDigit).setScale(8, BigDecimal.ROUND_HALF_EVEN));
-                    } else if (t.equals("/")) {
-                        stack.push(firstDigit.divide(secondDigit, 8, BigDecimal.ROUND_HALF_EVEN));
-                    } else if (t.equals("+")) {
-                        stack.push(firstDigit.add(secondDigit).setScale(8, BigDecimal.ROUND_HALF_EVEN));
-                    } else if (t.equals("-")) {
-                        stack.push(firstDigit.subtract(secondDigit).setScale(8, BigDecimal.ROUND_HALF_EVEN));
+                    switch (t) {
+                        case "^" -> stack.push(firstDigit.pow(secondDigit.intValue(), MathContext.DECIMAL32));
+                        case "*" -> stack.push(firstDigit.multiply(secondDigit));
+                        case "/" -> stack.push(firstDigit.divide(secondDigit, 8, RoundingMode.HALF_EVEN));
+                        case "+" -> stack.push(firstDigit.add(secondDigit));
+                        case "-" -> stack.push(firstDigit.subtract(secondDigit));
                     }
                 } else {
                     // если на входе число, то кладем его в стек.
