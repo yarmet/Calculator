@@ -1,7 +1,3 @@
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
-
 /**
  * Created by yarmet on 07.02.2015.
  */
