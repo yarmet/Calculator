@@ -3,9 +3,9 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.*;
 
-class Calculator {
+class CalculatorV1 {
 
-    private final Map<Character, Integer> priority = new HashMap<Character, Integer>();
+    private final Map<Character, Integer> priority = new HashMap<>();
 
     {
         priority.put('^', 3);
@@ -25,10 +25,9 @@ class Calculator {
         }
         // если на вход пришла закрывающая скобка, то достаем все операторы из стека, пока не встретим открывающую скобку.
         if (inputSymbol == ')') {
-            while (operatorStack.peek() != '(') {
-                outString.add(operatorStack.pop().toString());
+            for (Character temp = operatorStack.pop(); !Objects.equals('(', temp); temp = operatorStack.pop()) {
+                outString.add(temp.toString());
             }
-            operatorStack.pop();
             return;
         }
         // если на входе оператор, и его приоритет выше, чем приоритет последнего оператора в стеке, то кладем его в стек.
@@ -64,8 +63,7 @@ class Calculator {
             if (previousSymbol == null) {
                 // и если он минус, то заменяем его унарным минусом ±
                 if (currentSymbol == '-') currentSymbol = '±';
-                // если наш символ не первый в строке
-            } else {
+            } else { // если наш символ не первый в строке
                 // Минус перед которым нет другого числа, является унарным. За исключением случаев
                 // когда перед ним закрывающая скобка
                 if (!isDigit(previousSymbol) && currentSymbol == '-' && previousSymbol != ')') currentSymbol = '±';
@@ -112,10 +110,10 @@ class Calculator {
     /**
      * выводит ответ выражения
      */
-    public BigDecimal getAnswer(String inputSymbol) {
+    public BigDecimal calculate(String inputSymbol) {
 
         BigDecimal firstDigit, secondDigit;
-        Stack<BigDecimal> stack = new Stack<BigDecimal>();
+        Stack<BigDecimal> stack = new Stack<>();
 
         //получаем обратную польскую запись.
         List<String> out = getOPN(inputSymbol);
@@ -134,7 +132,7 @@ class Calculator {
                     switch (t) {
                         case "^" -> stack.push(firstDigit.pow(secondDigit.intValue(), MathContext.DECIMAL32));
                         case "*" -> stack.push(firstDigit.multiply(secondDigit));
-                        case "/" -> stack.push(firstDigit.divide(secondDigit, 8, RoundingMode.HALF_EVEN));
+                        case "/" -> stack.push(firstDigit.divide(secondDigit, 10, RoundingMode.HALF_EVEN));
                         case "+" -> stack.push(firstDigit.add(secondDigit));
                         case "-" -> stack.push(firstDigit.subtract(secondDigit));
                     }
